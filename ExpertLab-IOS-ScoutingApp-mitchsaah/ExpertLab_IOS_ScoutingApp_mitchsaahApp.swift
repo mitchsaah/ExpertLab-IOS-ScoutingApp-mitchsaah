@@ -1,14 +1,20 @@
-//
-//  ExpertLab_IOS_ScoutingApp_mitchsaahApp.swift
-//  ExpertLab-IOS-ScoutingApp-mitchsaah
-//
-//  Created by Mitch Saah on 25/11/2024.
-//
-
 import SwiftUI
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+
+    return true
+  }
+}
 
 @main
 struct ExpertLab_IOS_ScoutingApp_mitchsaahApp: App {
+    // Register app delegate for Firebase setup
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
