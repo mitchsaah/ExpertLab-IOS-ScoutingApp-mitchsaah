@@ -21,6 +21,7 @@ struct ContentView: View {
 
             // Button to read data FROM Firestore
             Button(action: {
+                readFromFirestore()
             }) {
                 Text("Read from Firestore")
                     .padding()
@@ -43,6 +44,24 @@ struct ContentView: View {
                 print("Error writing to Firestore: \(error.localizedDescription)")
             } else {
                 print("Data successfully written to Firestore!")
+            }
+        }
+    }
+    
+    // Function to read data from Firestore
+    func readFromFirestore() {
+        let db = Firestore.firestore()
+        let testDoc = db.collection("testCollection").document("testFirebase")
+
+        // Reading data
+        testDoc.getDocument { document, error in
+            if let error = error {
+                print("Error reading Firestore: \(error.localizedDescription)")
+            } else if let document = document, document.exists {
+                let data = document.data()
+                print("Document data: \(data ?? [:])")
+            } else {
+                print("This document does not exist")
             }
         }
     }
