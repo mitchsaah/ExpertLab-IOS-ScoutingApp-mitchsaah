@@ -1,5 +1,6 @@
 import SwiftUI
 import FirebaseAuth
+import GoogleSignIn
 
 struct AuthenticationView: View {
     @State private var email = ""
@@ -32,6 +33,7 @@ struct AuthenticationView: View {
             }
             
             HStack(spacing: 15) {
+                // Log In button
                 Button("Log In") {
                     logInWithEmail()
                 }
@@ -40,7 +42,8 @@ struct AuthenticationView: View {
                 .background(Color.blue)
                 .foregroundColor(.white)
                 .cornerRadius(8)
-
+                
+                // Sign Up button
                 Button("Sign Up") {
                     signUpWithEmail()
                 }
@@ -48,6 +51,24 @@ struct AuthenticationView: View {
                 .padding()
                 .background(Color.green)
                 .foregroundColor(.white)
+                .cornerRadius(8)
+            }
+            
+            // Google button
+            Button(action: handleGoogleSignIn) {
+                HStack {
+                    Image("google_logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+
+                    Text("Sign in with Google")
+                        .font(.system(size: 16))
+                        .foregroundColor(.black)
+                }
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .padding(.horizontal, 20)
+                .background(Color(red: 245/255, green: 245/255, blue: 245/255))
                 .cornerRadius(8)
             }
         }
@@ -78,6 +99,10 @@ struct AuthenticationView: View {
                 password = ""
             }
         }
+    }
+    
+    func handleGoogleSignIn() {
+        print("Google Sign-In button tapped")
     }
 }
 
