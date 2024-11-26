@@ -21,6 +21,26 @@ struct AuthenticationView: View {
                 .padding()
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(8)
+            
+            HStack(spacing: 15) {
+                Button("Log In") {
+                    print("Log In tapped")
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+
+                Button("Sign Up") {
+                    print("Sign Up tapped")
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.green)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+            }
         }
         .padding()
     }
