@@ -109,6 +109,9 @@ struct AuthenticationView: View {
         }
 
         let config = GIDConfiguration(clientID: clientID)
+        
+        // Assign the configuration to GIDSignIn
+        GIDSignIn.sharedInstance.configuration = config
     }
 }
 
