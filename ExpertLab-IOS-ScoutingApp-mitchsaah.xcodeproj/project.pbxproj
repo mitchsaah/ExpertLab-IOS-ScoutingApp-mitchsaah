@@ -20,9 +20,22 @@
 		13D4596C2CF4BD3A0069CBD1 /* ExpertLab-IOS-ScoutingApp-mitchsaah.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ExpertLab-IOS-ScoutingApp-mitchsaah.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		135EBAC02CF6286800F68119 /* Exceptions for "ExpertLab-IOS-ScoutingApp-mitchsaah" folder in "ExpertLab-IOS-ScoutingApp-mitchsaah" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 13D4596B2CF4BD3A0069CBD1 /* ExpertLab-IOS-ScoutingApp-mitchsaah */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		13D4596E2CF4BD3A0069CBD1 /* ExpertLab-IOS-ScoutingApp-mitchsaah */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				135EBAC02CF6286800F68119 /* Exceptions for "ExpertLab-IOS-ScoutingApp-mitchsaah" folder in "ExpertLab-IOS-ScoutingApp-mitchsaah" target */,
+			);
 			path = "ExpertLab-IOS-ScoutingApp-mitchsaah";
 			sourceTree = "<group>";
 		};
@@ -283,6 +296,7 @@
 				DEVELOPMENT_TEAM = G26THLDNND;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ExpertLab-IOS-ScoutingApp-mitchsaah/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -312,6 +326,7 @@
 				DEVELOPMENT_TEAM = G26THLDNND;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ExpertLab-IOS-ScoutingApp-mitchsaah/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
