@@ -112,6 +112,38 @@ struct AuthenticationView: View {
         
         // Assign the configuration to GIDSignIn
         GIDSignIn.sharedInstance.configuration = config
+        GIDSignIn.sharedInstance.signIn(withPresenting: getRootViewController()) { result, error in
+            if let error = error {
+                errorMessage = "Google Sign-In Error: \(error.localizedDescription)"
+                return
+            }
+
+            guard let user = result?.user,
+                  let idToken = user.idToken?.tokenString else {
+                errorMessage = "Failed to retrieve Google user or ID token."
+                return
+            }
+
+            // Processes the ID token for Firebase
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user.accessToken.tokenString)
+            
+            Auth.auth().signIn(with: credential) { result, error in
+                if let error = error {
+                    errorMessage = "Firebase Sign-In Error: \(error.localizedDescription)"
+                } else {
+                    errorMessage = "Google Sign-In successful!"
+                }
+            }
+        }
+    }
+    
+    // Helper function to retrieve the root view controller
+    func getRootViewController() -> UIViewController {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootVC = windowScene.windows.first?.rootViewController else {
+            fatalError("Root view controller not found.")
+        }
+        return rootVC
     }
 }
 
