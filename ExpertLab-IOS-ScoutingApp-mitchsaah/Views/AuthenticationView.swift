@@ -1,9 +1,11 @@
 import SwiftUI
+import FirebaseAuth
 
 struct AuthenticationView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var errorMessage = ""
+    @State private var isLoading = false
     
     var body: some View {
         VStack (spacing: 20) {
@@ -31,7 +33,7 @@ struct AuthenticationView: View {
             
             HStack(spacing: 15) {
                 Button("Log In") {
-                    errorMessage = "Needs to be implemented"
+                    logInWithEmail()
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -40,7 +42,7 @@ struct AuthenticationView: View {
                 .cornerRadius(8)
 
                 Button("Sign Up") {
-                    errorMessage = "Needs to be implemented"
+                    signUpWithEmail()
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -50,6 +52,32 @@ struct AuthenticationView: View {
             }
         }
         .padding()
+    }
+    
+    func logInWithEmail() {
+        isLoading = true
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            isLoading = false
+            if let error = error {
+                errorMessage = "Log In Error: \(error.localizedDescription)"
+            } else {
+                errorMessage = "Logged in successfully!"
+            }
+        }
+    }
+    
+    func signUpWithEmail() {
+        isLoading = true
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            isLoading = false
+            if let error = error {
+                errorMessage = "Sign Up Error: \(error.localizedDescription)"
+            } else {
+                errorMessage = "Account created successfully!"
+                email = ""
+                password = ""
+            }
+        }
     }
 }
 
