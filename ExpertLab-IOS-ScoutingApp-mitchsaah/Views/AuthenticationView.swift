@@ -3,6 +3,7 @@ import SwiftUI
 struct AuthenticationView: View {
     @State private var email = ""
     @State private var password = ""
+    @State private var errorMessage = ""
     
     var body: some View {
         VStack (spacing: 20) {
@@ -22,9 +23,15 @@ struct AuthenticationView: View {
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(8)
             
+            if !errorMessage.isEmpty {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .font(.caption)
+            }
+            
             HStack(spacing: 15) {
                 Button("Log In") {
-                    print("Log In tapped")
+                    errorMessage = "Needs to be implemented"
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -33,7 +40,7 @@ struct AuthenticationView: View {
                 .cornerRadius(8)
 
                 Button("Sign Up") {
-                    print("Sign Up tapped")
+                    errorMessage = "Needs to be implemented"
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
