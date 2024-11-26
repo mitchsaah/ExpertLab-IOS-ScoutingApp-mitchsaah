@@ -1,6 +1,7 @@
 import SwiftUI
 import FirebaseAuth
 import GoogleSignIn
+import FirebaseCore
 
 struct AuthenticationView: View {
     @State private var email = ""
@@ -102,7 +103,12 @@ struct AuthenticationView: View {
     }
     
     func handleGoogleSignIn() {
-        print("Google Sign-In button tapped")
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            errorMessage = "Failed to retrieve client ID."
+            return
+        }
+
+        let config = GIDConfiguration(clientID: clientID)
     }
 }
 
