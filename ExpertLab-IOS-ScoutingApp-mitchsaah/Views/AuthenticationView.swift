@@ -140,7 +140,8 @@ struct AuthenticationView: View {
             isLoading = false
             if let error = error {
                 errorMessage = "Sign Up Error: \(error.localizedDescription)"
-            } else {
+            } else if let user = result?.user {
+                saveRoleToFirestore(uid: user.uid)
                 errorMessage = "Account created successfully!"
                 email = ""
                 password = ""
@@ -176,7 +177,8 @@ struct AuthenticationView: View {
             Auth.auth().signIn(with: credential) { result, error in
                 if let error = error {
                     errorMessage = "Firebase Sign-In Error: \(error.localizedDescription)"
-                } else {
+                } else if let user = result?.user {
+                    saveRoleToFirestore(uid: user.uid)
                     errorMessage = "Google Sign-In successful!"
                 }
             }
