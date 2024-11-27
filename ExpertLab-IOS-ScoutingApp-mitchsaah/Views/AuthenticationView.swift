@@ -4,6 +4,7 @@ import GoogleSignIn
 import FirebaseCore
 
 struct AuthenticationView: View {
+    let selectedRole: String?
     @State private var email = ""
     @State private var password = ""
     @State private var errorMessage = ""
@@ -148,5 +149,5 @@ struct AuthenticationView: View {
 }
 
 #Preview {
-    AuthenticationView()
+    AuthenticationView(selectedRole: "Scout") // Example role
 }
