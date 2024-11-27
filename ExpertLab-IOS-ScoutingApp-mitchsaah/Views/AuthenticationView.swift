@@ -12,9 +12,14 @@ struct AuthenticationView: View {
     
     var body: some View {
         VStack (spacing: 20) {
-            Text("Sign In")
+            Text(getLargeTitle())
                 .font(.largeTitle)
-                .padding()
+                .multilineTextAlignment(.center)
+            
+            Text(getSubtitle())
+                .font(.body)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
             
             TextField("Email", text: $email)
                 .keyboardType(.emailAddress)
@@ -75,6 +80,32 @@ struct AuthenticationView: View {
             }
         }
         .padding()
+    }
+    
+    func getLargeTitle() -> String {
+        guard let role = selectedRole else { return "Welcome!" }
+            
+        switch role {
+        case "Coach":
+            return "Welcome, Coach!"
+        case "Scout":
+            return "Welcome, Scout!"
+        default:
+            return "Welcome!"
+        }
+    }
+    
+    func getSubtitle() -> String {
+        guard let role = selectedRole else { return "Sign in to continue." }
+            
+        switch role {
+        case "Coach":
+            return "Sign in to discover talent."
+        case "Scout":
+            return "Sign in to add new players."
+        default:
+            return "Sign in to continue."
+        }
     }
     
     func logInWithEmail() {
