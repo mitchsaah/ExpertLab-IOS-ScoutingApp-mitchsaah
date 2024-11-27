@@ -41,6 +41,19 @@ struct RoleSelectionView: View {
                         }
                     )
                 }
+                
+                // Hyperlink for Login
+                HStack {
+                    Text("Already have an account?")
+                        .foregroundColor(.gray)
+                                    
+                    NavigationLink(destination: AuthenticationView(selectedRole: nil)) {
+                        Text("Log in")
+                            .foregroundColor(.blue)
+                            .underline()
+                    }
+                }
+                .padding(.top, 10)
             }
             .padding()
         }
