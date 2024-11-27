@@ -2,6 +2,7 @@ import SwiftUI
 import FirebaseAuth
 import GoogleSignIn
 import FirebaseCore
+import FirebaseFirestore
 
 struct AuthenticationView: View {
     let selectedRole: String?
@@ -105,6 +106,19 @@ struct AuthenticationView: View {
             return "Sign in to add new players."
         default:
             return "Sign in to continue."
+        }
+    }
+    
+    func saveRoleToFirestore(uid: String) {
+        guard let role = selectedRole else { return }
+           
+        let db = Firestore.firestore()
+        db.collection("users").document(uid).setData(["role": role]) { error in
+            if let error = error {
+                errorMessage = "Failed to save role: \(error.localizedDescription)"
+            } else {
+                print("Role \(role) successfully saved for user \(uid)")
+            }
         }
     }
     
