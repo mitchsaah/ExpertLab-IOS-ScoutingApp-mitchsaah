@@ -14,7 +14,7 @@ struct RoleSelectionView: View {
                     selectedRole = "Scout"
                 }
                 .padding()
-                .background(Color.blue)
+                .background(selectedRole == "Scout" ? Color.blue.opacity(0.5) : Color.blue)
                 .foregroundColor(.white)
                 .cornerRadius(8)
                 
@@ -24,7 +24,7 @@ struct RoleSelectionView: View {
                     selectedRole = "Coach"
                 }
                 .padding()
-                .background(Color.red)
+                .background(selectedRole == "Coach" ? Color.red.opacity(0.5) : Color.red)
                 .foregroundColor(.white)
                 .cornerRadius(8)
                 
