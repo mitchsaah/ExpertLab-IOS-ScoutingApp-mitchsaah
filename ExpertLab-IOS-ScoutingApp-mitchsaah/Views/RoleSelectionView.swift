@@ -31,7 +31,7 @@ struct RoleSelectionView: View {
                 // NavigationLink
                 if let role = selectedRole {
                     NavigationLink(
-                        destination: AuthenticationView(selectedRole: role),
+                        destination: AuthenticationView(selectedRole: role, isSignUp: true),
                         label: {
                             Text("Proceed")
                                 .frame(maxWidth: .infinity)
@@ -47,7 +47,7 @@ struct RoleSelectionView: View {
                     Text("Already have an account?")
                         .foregroundColor(.gray)
                                     
-                    NavigationLink(destination: AuthenticationView(selectedRole: nil)) {
+                    NavigationLink(destination: AuthenticationView(selectedRole: nil, isSignUp: false)) {
                         Text("Log in")
                             .foregroundColor(.blue)
                             .underline()

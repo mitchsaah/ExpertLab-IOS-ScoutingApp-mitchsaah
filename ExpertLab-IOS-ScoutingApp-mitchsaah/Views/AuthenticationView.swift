@@ -6,6 +6,7 @@ import FirebaseFirestore
 
 struct AuthenticationView: View {
     let selectedRole: String?
+    let isSignUp: Bool // True for sign-up, false for log-in
     @State private var email = ""
     @State private var password = ""
     @State private var errorMessage = ""
@@ -40,27 +41,18 @@ struct AuthenticationView: View {
                     .font(.caption)
             }
             
-            HStack(spacing: 15) {
-                // Log In button
-                Button("Log In") {
+            Button(isSignUp ? "Sign Up" : "Log In") {
+                if isSignUp {
+                    signUpWithEmail()
+                } else {
                     logInWithEmail()
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
-                
-                // Sign Up button
-                Button("Sign Up") {
-                    signUpWithEmail()
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.green)
-                .foregroundColor(.white)
-                .cornerRadius(8)
             }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(isSignUp ? Color.green : Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(8)
             
             // Google button
             Button(action: handleGoogleSignIn) {
@@ -84,7 +76,7 @@ struct AuthenticationView: View {
     }
     
     func getLargeTitle() -> String {
-        guard let role = selectedRole else { return "Welcome!" }
+        guard let role = selectedRole else { return "Welcome back!" }
             
         switch role {
         case "Coach":
@@ -92,20 +84,33 @@ struct AuthenticationView: View {
         case "Scout":
             return "Welcome, Scout!"
         default:
-            return "Welcome!"
+            return "Welcome back!"
         }
     }
     
     func getSubtitle() -> String {
-        guard let role = selectedRole else { return "Sign in to continue." }
+        guard let role = selectedRole else { return isSignUp ? "Sign up to continue." : "Log in to your account." }
             
         switch role {
         case "Coach":
-            return "Sign in to discover talent."
+            return isSignUp ? "Sign up to discover talent." : "Log in to discover talent."
         case "Scout":
-            return "Sign in to add new players."
+            return isSignUp ? "Sign up to add new players." : "Log in to manage your players."
         default:
-            return "Sign in to continue."
+            return isSignUp ? "Sign up to continue." : "Log in to your account."
+        }
+    }
+    
+    func fetchRoleFromFirestore(uid: String) {
+        let db = Firestore.firestore()
+        db.collection("users").document(uid).getDocument { document, error in
+            if let error = error {
+                errorMessage = "Failed to fetch role: \(error.localizedDescription)"
+            } else if let document = document, let data = document.data(), let role = data["role"] as? String {
+                print("Fetched role: \(role)")
+            } else {
+                errorMessage = "No role found for user."
+            }
         }
     }
     
@@ -128,7 +133,8 @@ struct AuthenticationView: View {
             isLoading = false
             if let error = error {
                 errorMessage = "Log In Error: \(error.localizedDescription)"
-            } else {
+            } else if let user = result?.user {
+                fetchRoleFromFirestore(uid: user.uid)
                 errorMessage = "Logged in successfully!"
             }
         }
@@ -178,7 +184,11 @@ struct AuthenticationView: View {
                 if let error = error {
                     errorMessage = "Firebase Sign-In Error: \(error.localizedDescription)"
                 } else if let user = result?.user {
-                    saveRoleToFirestore(uid: user.uid)
+                    if isSignUp {
+                        saveRoleToFirestore(uid: user.uid)
+                    } else {
+                        fetchRoleFromFirestore(uid: user.uid)
+                    }
                     errorMessage = "Google Sign-In successful!"
                 }
             }
@@ -196,5 +206,5 @@ struct AuthenticationView: View {
 }
 
 #Preview {
-    AuthenticationView(selectedRole: "Scout") // Example role
+    AuthenticationView(selectedRole: "Scout", isSignUp: true) // Example role for signup
 }
