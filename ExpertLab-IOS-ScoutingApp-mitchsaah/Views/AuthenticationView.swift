@@ -11,68 +11,73 @@ struct AuthenticationView: View {
     @State private var password = ""
     @State private var errorMessage = ""
     @State private var isLoading = false
+    @State private var navigateToDashboard = false
+    @State private var userRole: String?
     
     var body: some View {
-        VStack (spacing: 20) {
-            Text(getLargeTitle())
-                .font(.largeTitle)
-                .multilineTextAlignment(.center)
-            
-            Text(getSubtitle())
-                .font(.body)
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-            
-            TextField("Email", text: $email)
-                .keyboardType(.emailAddress)
-                .autocapitalization(.none)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-            
-            SecureField("Password", text: $password)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-            
-            if !errorMessage.isEmpty {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .font(.caption)
-            }
-            
-            Button(isSignUp ? "Sign Up" : "Log In") {
-                if isSignUp {
-                    signUpWithEmail()
-                } else {
-                    logInWithEmail()
+        NavigationStack{
+            VStack (spacing: 20) {
+                Text(getLargeTitle())
+                    .font(.largeTitle)
+                    .multilineTextAlignment(.center)
+                        
+                Text(getSubtitle())
+                    .font(.body)
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                        
+                TextField("Email", text: $email)
+                    .keyboardType(.emailAddress)
+                    .autocapitalization(.none)
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(8)
+                        
+                SecureField("Password", text: $password)
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(8)
+                        
+                if !errorMessage.isEmpty {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
                 }
-            }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(isSignUp ? Color.green : Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(8)
-            
-            // Google button
-            Button(action: handleGoogleSignIn) {
-                HStack {
-                    Image("google_logo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
+                        
+                Button(isSignUp ? "Sign Up" : "Log In") {
+                    if isSignUp {
+                        signUpWithEmail()
+                    } else {
+                        logInWithEmail()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(isSignUp ? Color.green : Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+                        
+                // Google button
+                Button(action: handleGoogleSignIn) {
+                    HStack {
+                        Image("google_logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
 
-                    Text("Sign in with Google")
-                        .font(.system(size: 16))
-                        .foregroundColor(.black)
+                        Text("Sign in with Google")
+                            .font(.system(size: 16))
+                            .foregroundColor(.black)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .padding(.horizontal, 20)
+                    .background(Color(red: 245/255, green: 245/255, blue: 245/255))
+                    .cornerRadius(8)
                 }
-                .frame(maxWidth: .infinity, minHeight: 44)
-                .padding(.horizontal, 20)
-                .background(Color(red: 245/255, green: 245/255, blue: 245/255))
-                .cornerRadius(8)
             }
+            .padding()
         }
-        .padding()
+        
     }
     
     func getLargeTitle() -> String {
