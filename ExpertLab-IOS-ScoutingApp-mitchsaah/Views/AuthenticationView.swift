@@ -16,68 +16,77 @@ struct AuthenticationView: View {
     
     var body: some View {
         NavigationStack{
-            VStack (spacing: 20) {
-                Text(getLargeTitle())
-                    .font(.largeTitle)
-                    .multilineTextAlignment(.center)
-                        
-                Text(getSubtitle())
-                    .font(.body)
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-                        
-                TextField("Email", text: $email)
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-                        
-                SecureField("Password", text: $password)
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-                        
-                if !errorMessage.isEmpty {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .font(.caption)
+            if isLoading {
+                VStack {
+                    ProgressView("Loading...")
+                        .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                        .scaleEffect(1.5)
+                        .multilineTextAlignment(.center)
                 }
-                        
-                Button(isSignUp ? "Sign Up" : "Log In") {
-                    if isSignUp {
-                        signUpWithEmail()
-                    } else {
-                        logInWithEmail()
+            } else {
+                VStack (spacing: 20) {
+                    Text(getLargeTitle())
+                        .font(.largeTitle)
+                        .multilineTextAlignment(.center)
+                             
+                    Text(getSubtitle())
+                        .font(.body)
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                             
+                    TextField("Email", text: $email)
+                        .keyboardType(.emailAddress)
+                        .autocapitalization(.none)
+                        .padding()
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(8)
+                             
+                    SecureField("Password", text: $password)
+                        .padding()
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(8)
+                             
+                    if !errorMessage.isEmpty {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.caption)
                     }
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(isSignUp ? Color.green : Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
-                        
-                // Google button
-                Button(action: handleGoogleSignIn) {
-                    HStack {
-                        Image("google_logo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
+                             
+                    Button(isSignUp ? "Sign Up" : "Log In") {
+                        if isSignUp {
+                            signUpWithEmail()
+                        } else {
+                            logInWithEmail()
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(isSignUp ? Color.green : Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                             
+                    // Google button
+                    Button(action: handleGoogleSignIn) {
+                        HStack {
+                            Image("google_logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
 
-                        Text("Sign in with Google")
-                            .font(.system(size: 16))
-                            .foregroundColor(.black)
+                            Text("Sign in with Google")
+                                .font(.system(size: 16))
+                                .foregroundColor(.black)
+                        }
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .padding(.horizontal, 20)
+                        .background(Color(red: 245/255, green: 245/255, blue: 245/255))
+                        .cornerRadius(8)
                     }
-                    .frame(maxWidth: .infinity, minHeight: 44)
-                    .padding(.horizontal, 20)
-                    .background(Color(red: 245/255, green: 245/255, blue: 245/255))
-                    .cornerRadius(8)
                 }
-            }
-            .padding()
-            .navigationDestination(isPresented: $navigateToDashboard) {
-                DashboardView()
+                .padding()
+                .navigationDestination(isPresented: $navigateToDashboard) {
+                     DashboardView()
+                }
             }
         }
     }
@@ -109,6 +118,7 @@ struct AuthenticationView: View {
     }
     
     func fetchRoleFromFirestore(uid: String) {
+        isLoading = true
         let db = Firestore.firestore()
         db.collection("users").document(uid).getDocument { document, error in
             if let error = error {
@@ -116,6 +126,7 @@ struct AuthenticationView: View {
             } else if let document = document, let data = document.data(), let role = data["role"] as? String {
                 DispatchQueue.main.async {
                     userRole = role
+                    isLoading = false
                     navigateToDashboard = true // Trigger navigation
                 }
             } else {
@@ -126,13 +137,14 @@ struct AuthenticationView: View {
     
     func saveRoleToFirestore(uid: String) {
         guard let role = selectedRole else { return }
-           
+        isLoading = true
         let db = Firestore.firestore()
         db.collection("users").document(uid).setData(["role": role]) { error in
             if let error = error {
                 errorMessage = "Failed to save role: \(error.localizedDescription)"
             } else {
                 userRole = role
+                isLoading = false
                 navigateToDashboard = true
                 print("Role \(role) successfully saved for user \(uid)")
             }
@@ -187,17 +199,22 @@ struct AuthenticationView: View {
 
             // Processes the ID token for Firebase
             let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user.accessToken.tokenString)
+            isLoading = true
             
             Auth.auth().signIn(with: credential) { result, error in
-                if let error = error {
-                    errorMessage = "Firebase Sign-In Error: \(error.localizedDescription)"
-                } else if let user = result?.user {
-                    if isSignUp {
-                        saveRoleToFirestore(uid: user.uid)
-                    } else {
-                        fetchRoleFromFirestore(uid: user.uid)
+                DispatchQueue.main.async {
+                    isLoading = false
+                    if let error = error {
+                        isLoading = false
+                        errorMessage = "Firebase Sign-In Error: \(error.localizedDescription)"
+                    } else if let user = result?.user {
+                        if isSignUp {
+                            saveRoleToFirestore(uid: user.uid)
+                        } else {
+                            fetchRoleFromFirestore(uid: user.uid)
+                        }
+                        errorMessage = "Google Sign-In successful!"
                     }
-                    errorMessage = "Google Sign-In successful!"
                 }
             }
         }
