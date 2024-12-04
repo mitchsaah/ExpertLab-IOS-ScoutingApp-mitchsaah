@@ -76,8 +76,10 @@ struct AuthenticationView: View {
                 }
             }
             .padding()
+            .navigationDestination(isPresented: $navigateToDashboard) {
+                DashboardView()
+            }
         }
-        
     }
     
     func getLargeTitle() -> String {
@@ -112,7 +114,10 @@ struct AuthenticationView: View {
             if let error = error {
                 errorMessage = "Failed to fetch role: \(error.localizedDescription)"
             } else if let document = document, let data = document.data(), let role = data["role"] as? String {
-                print("Fetched role: \(role)")
+                DispatchQueue.main.async {
+                    userRole = role
+                    navigateToDashboard = true // Trigger navigation
+                }
             } else {
                 errorMessage = "No role found for user."
             }
@@ -127,6 +132,8 @@ struct AuthenticationView: View {
             if let error = error {
                 errorMessage = "Failed to save role: \(error.localizedDescription)"
             } else {
+                userRole = role
+                navigateToDashboard = true
                 print("Role \(role) successfully saved for user \(uid)")
             }
         }
@@ -140,7 +147,6 @@ struct AuthenticationView: View {
                 errorMessage = "Log In Error: \(error.localizedDescription)"
             } else if let user = result?.user {
                 fetchRoleFromFirestore(uid: user.uid)
-                errorMessage = "Logged in successfully!"
             }
         }
     }
@@ -153,9 +159,6 @@ struct AuthenticationView: View {
                 errorMessage = "Sign Up Error: \(error.localizedDescription)"
             } else if let user = result?.user {
                 saveRoleToFirestore(uid: user.uid)
-                errorMessage = "Account created successfully!"
-                email = ""
-                password = ""
             }
         }
     }
