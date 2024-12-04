@@ -1,7 +1,7 @@
 import Foundation
 
-struct Player: Identifiable {
-    let id = UUID() // ID of player
+struct Player: Identifiable, Codable {
+    let id: UUID // ID of player
     var name: String
     var age: Int
     var country: String
