@@ -29,17 +29,21 @@ struct DashboardView: View {
                         .multilineTextAlignment(.center)
                 } else {
                     List(players) { player in
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(player.name)
-                                    .font(.headline)
-                                Text("\(player.age) | \(player.country)")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
+                        NavigationLink (
+                            destination: PlayerDetailView(player: player)
+                        ) {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(player.name)
+                                        .font(.headline)
+                                    Text("\(player.age) | \(player.country)")
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
+                                }
+                                Spacer()
+                                Text(player.positionInitial)
+                                    .bold()
                             }
-                            Spacer()
-                            Text(player.positionInitial)
-                                .bold()
                         }
                     }
                 }
