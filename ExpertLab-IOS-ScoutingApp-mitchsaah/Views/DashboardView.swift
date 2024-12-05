@@ -9,6 +9,10 @@ struct DashboardView: View {
     @State private var selectedPlayer: Player?
     @State private var isLoading = false
     @State private var errorMessage: String = ""
+    
+    private var currentUserEmail: String? {
+            Auth.auth().currentUser?.email
+        }
 
     var body: some View {
         NavigationStack {
@@ -28,21 +32,32 @@ struct DashboardView: View {
                         .padding()
                         .multilineTextAlignment(.center)
                 } else {
-                    List(players) { player in
-                        NavigationLink (
-                            destination: PlayerDetailView(player: player)
-                        ) {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(player.name)
-                                        .font(.headline)
-                                    Text("\(player.age) | \(player.country)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
+                    List {
+                        ForEach(players) { player in
+                            NavigationLink(
+                                destination: PlayerDetailView(
+                                    player: player,
+                                    onEdit: { editedPlayer in
+                                        selectedPlayer = editedPlayer
+                                        showPlayerForm = true
+                                    },
+                                    onDelete: { playerToDelete in
+                                        deletePlayerFromFirestore(playerToDelete)
+                                    }
+                                )
+                            ) {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text(player.name)
+                                            .font(.headline)
+                                        Text("\(player.age) | \(player.country)")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                    }
+                                    Spacer()
+                                    Text(player.positionInitial)
+                                        .bold()
                                 }
-                                Spacer()
-                                Text(player.positionInitial)
-                                    .bold()
                             }
                         }
                     }
@@ -105,10 +120,34 @@ struct DashboardView: View {
     
     private func savePlayerToFirestore(_ player: Player) {
         let db = Firestore.firestore()
+        var updatedPlayer = player
+        if updatedPlayer.createdBy.isEmpty, let currentUserEmail = currentUserEmail {
+                updatedPlayer.createdBy = currentUserEmail
+        }
         do {
-            try db.collection("players").document(player.id).setData(from: player)
+            try db.collection("players").document(updatedPlayer.id).setData(from: updatedPlayer)
         } catch {
-            errorMessage = "Error saving player: \(error.localizedDescription)"
+            print("Error saving player: \(error.localizedDescription)")
+        }
+    }
+    
+private func deletePlayerFromFirestore(_ player: Player) {
+        guard let currentUserEmail = currentUserEmail, player.createdBy == currentUserEmail else {
+            print("Unauthorized deletion attempt.")
+            return
+        }
+            
+        let db = Firestore.firestore()
+        db.collection("players").document(player.id).delete { error in
+            if let error = error {
+                print("Error deleting player: \(error.localizedDescription)")
+            } else {
+                DispatchQueue.main.async {
+                    if let index = players.firstIndex(where: { $0.id == player.id }) {
+                            players.remove(at: index)
+                    }
+                }
+            }
         }
     }
 }
