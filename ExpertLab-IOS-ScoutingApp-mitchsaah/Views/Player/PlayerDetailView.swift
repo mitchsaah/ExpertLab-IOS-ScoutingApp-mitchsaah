@@ -6,6 +6,7 @@ struct PlayerDetailView: View {
     let player: Player
     let onEdit: (Player) -> Void
     let onDelete: (Player) -> Void
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ScrollView {
@@ -65,6 +66,7 @@ struct PlayerDetailView: View {
                         // Delete Button
                         Button(action: {
                             onDelete(player)
+                            dismiss()
                         }) {
                             HStack {
                                 Image(systemName: "trash.circle.fill")
