@@ -9,6 +9,7 @@ struct DashboardView: View {
     @State private var selectedPlayer: Player?
     @State private var isLoading = false
     @State private var errorMessage: String = ""
+    @Environment(\.dismiss) private var dismiss // Dismiss property
     
     private var currentUserEmail: String? {
             Auth.auth().currentUser?.email
@@ -100,6 +101,15 @@ struct DashboardView: View {
                     }
                 )
             }
+            .navigationBarBackButtonHidden(true) // Hides the back button
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Logout") {
+                        handleLogout()
+                    }
+                    .foregroundColor(.red)
+                }
+            }
         }
     }
 
@@ -148,6 +158,15 @@ private func deletePlayerFromFirestore(_ player: Player) {
                     }
                 }
             }
+        }
+    }
+    
+    private func handleLogout() {
+        do {
+            try Auth.auth().signOut() // Signs out the user
+            dismiss()
+        } catch {
+            print("Error during logout: \(error.localizedDescription)")
         }
     }
 }

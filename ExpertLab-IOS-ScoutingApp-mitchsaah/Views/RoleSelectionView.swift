@@ -1,7 +1,9 @@
 import SwiftUI
+import FirebaseAuth
 
 struct RoleSelectionView: View {
     @State private var selectedRole: String? = nil
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
