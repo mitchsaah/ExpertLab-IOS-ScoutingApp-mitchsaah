@@ -85,7 +85,11 @@ struct AuthenticationView: View {
                 }
                 .padding()
                 .navigationDestination(isPresented: $navigateToDashboard) {
-                     DashboardView()
+                    if let userRole = userRole {
+                        DashboardView(role: userRole)
+                    } else {
+                        Text("Failed to determine role.")
+                    }
                 }
             }
         }
