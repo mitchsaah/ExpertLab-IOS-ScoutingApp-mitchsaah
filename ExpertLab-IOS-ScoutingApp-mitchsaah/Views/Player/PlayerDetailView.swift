@@ -4,6 +4,8 @@ import FirebaseAuth
 
 struct PlayerDetailView: View {
     let player: Player
+    let onEdit: (Player) -> Void
+    let onDelete: (Player) -> Void
 
     var body: some View {
         ScrollView {
@@ -40,6 +42,45 @@ struct PlayerDetailView: View {
                 .background(RoundedRectangle(cornerRadius: 12).fill(Color(.systemGray6)))
                 .padding(.horizontal)
 
+                // Action Buttons (Only for Creator)
+                if player.createdBy == Auth.auth().currentUser?.email {
+                    HStack(spacing: 15) {
+                        // Edit Button
+                        Button(action: {
+                            onEdit(player)
+                        }) {
+                            HStack {
+                                Image(systemName: "pencil.circle.fill")
+                                    .font(.title3)
+                                Text("Edit")
+                                    .fontWeight(.semibold)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                        }
+
+                        // Delete Button
+                        Button(action: {
+                            onDelete(player)
+                        }) {
+                            HStack {
+                                Image(systemName: "trash.circle.fill")
+                                    .font(.title3)
+                                Text("Delete")
+                                    .fontWeight(.semibold)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.red)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
                 Spacer()
             }
             .padding()
