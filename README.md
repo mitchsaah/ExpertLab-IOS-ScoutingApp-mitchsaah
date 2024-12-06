@@ -23,7 +23,7 @@ A football scouting platform built in Swift with Firebase, designed to help coac
 - [Swift NavigationStack](https://developer.apple.com/documentation/swiftui/navigationstack)
 
 ### Google Logo Assets
-- [Google Logo (For Sign up / Log in](https://developers.google.com/identity/branding-guidelines)
+- [Google Logo (For Sign up / Log in)](https://developers.google.com/identity/branding-guidelines)
   
 ## License
 This project is licensed under [MIT License](LICENSE).
