@@ -36,16 +36,7 @@ struct DashboardView: View {
                     List {
                         ForEach(players) { player in
                             NavigationLink(
-                                destination: PlayerDetailView(
-                                    player: player,
-                                    onEdit: { editedPlayer in
-                                        selectedPlayer = editedPlayer
-                                        showPlayerForm = true
-                                    },
-                                    onDelete: { playerToDelete in
-                                        deletePlayerFromFirestore(playerToDelete)
-                                    }
-                                )
+                                destination: PlayerDetailView(player: player)
                             ) {
                                 HStack {
                                     VStack(alignment: .leading) {
@@ -138,26 +129,6 @@ struct DashboardView: View {
             try db.collection("players").document(updatedPlayer.id).setData(from: updatedPlayer)
         } catch {
             print("Error saving player: \(error.localizedDescription)")
-        }
-    }
-    
-private func deletePlayerFromFirestore(_ player: Player) {
-        guard let currentUserEmail = currentUserEmail, player.createdBy == currentUserEmail else {
-            print("Unauthorized deletion attempt.")
-            return
-        }
-            
-        let db = Firestore.firestore()
-        db.collection("players").document(player.id).delete { error in
-            if let error = error {
-                print("Error deleting player: \(error.localizedDescription)")
-            } else {
-                DispatchQueue.main.async {
-                    if let index = players.firstIndex(where: { $0.id == player.id }) {
-                            players.remove(at: index)
-                    }
-                }
-            }
         }
     }
     
