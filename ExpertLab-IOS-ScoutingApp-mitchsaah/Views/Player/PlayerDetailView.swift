@@ -4,9 +4,8 @@ import FirebaseAuth
 
 struct PlayerDetailView: View {
     let player: Player
-    let onEdit: (Player) -> Void
-    let onDelete: (Player) -> Void
     @Environment(\.dismiss) private var dismiss
+    @State private var isEditing = false
 
     var body: some View {
         ScrollView {
@@ -48,7 +47,7 @@ struct PlayerDetailView: View {
                     HStack(spacing: 15) {
                         // Edit Button
                         Button(action: {
-                            onEdit(player)
+                            isEditing = true
                         }) {
                             HStack {
                                 Image(systemName: "pencil.circle.fill")
@@ -64,10 +63,7 @@ struct PlayerDetailView: View {
                         }
 
                         // Delete Button
-                        Button(action: {
-                            onDelete(player)
-                            dismiss()
-                        }) {
+                        Button(action: deletePlayer) {
                             HStack {
                                 Image(systemName: "trash.circle.fill")
                                     .font(.title3)
@@ -89,6 +85,37 @@ struct PlayerDetailView: View {
         }
         .navigationTitle("Player Details")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $isEditing) {
+            PlayerFormView(
+                player: player,
+                onSave: { updatedPlayer in
+                    savePlayer(updatedPlayer)
+                    isEditing = false
+                }
+            )
+        }
+    }
+    
+    private func deletePlayer() {
+        let db = Firestore.firestore()
+        db.collection("players").document(player.id).delete { error in
+            if let error = error {
+                print("Error deleting player: \(error.localizedDescription)")
+            } else {
+                print("Player deleted successfully!")
+                dismiss()
+            }
+        }
+    }
+
+    private func savePlayer(_ updatedPlayer: Player) {
+        let db = Firestore.firestore()
+        do {
+            try     db.collection("players").document(updatedPlayer.id).setData(from: updatedPlayer)
+                print("Player updated successfully!")
+        } catch {
+            print("Error updating player: \(error.localizedDescription)")
+        }
     }
 }
 
